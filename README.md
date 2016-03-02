@@ -2,6 +2,7 @@
 Final group project for Big Data Class
 
 
+
 Summary of Variables Used in the Analysis
 Explanatory Variable        Description
 1 asset_growth              Asset growth (%) between Year T-2 and Year T-1
