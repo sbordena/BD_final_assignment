@@ -195,6 +195,33 @@ round(pca_train$rotation[,1:4],1)
 
 save.image()
 
+### PCA analysis #####
+zdf<-as.data.frame(z_train)
+kfits <- lapply(1:25, # do the below for K=1:25
+                function(K) glm(y_train~., data=zdf[,1:K,drop=FALSE]))
+
+aicc <- sapply(kfits, AICc) # apply AICc to each fit
+which.min(aicc) ## looks like it likes all of them...
+
+## now the lasso
+## nfold=20 for leave-two-out CV... 
+lassoPCR <- cv.gamlr(x=zdf, y=y_train, nfold=20)
+## lasso.1se agrees with IC on first 2, then grabs a couple extra
+coef(lassoPCR) 
+
+## plot 'em
+par(mfrow=c(1,2))
+plot(aicc, pch=21, bg="maroon", xlab="K", ylab="AICc")
+plot(lassoPCR) 
+
+## Q4 compare to an un-factorized lasso
+lasso <- cv.gamlr(x=as.matrix(x_train), y=y_train, nfold=20)
+plot(lasso, main="regression onto raw fx data")
+plot(lassoPCR, main="PCR")
+
+##########
+
+
 ```{r}
 stopCluster(cl)   # shut down the parallel computing cluster
 ```
